@@ -2,44 +2,50 @@ package webm
 
 import (
 	"fmt"
-	"github.com/petar/GoLLRB/llrb"
 	"log"
 	"time"
+
+	"github.com/petar/GoLLRB/llrb"
 )
 
 type seekEntry struct {
-	t      time.Duration
+	dur    time.Duration
 	offset int64
 }
 
-func (se seekEntry) String() string {
-	return fmt.Sprintf("{%v %v}", se.t, se.offset)
+// Less implements llrb.Item
+func (it seekEntry) Less(it2 llrb.Item) bool {
+	return it.dur < it2.(seekEntry).dur
+}
+
+func (it seekEntry) String() string {
+	return fmt.Sprintf("{%v %v}", it.dur, it.offset)
 }
 
 type seekIndex struct {
-	t llrb.Tree
+	Tree *llrb.LLRB
 }
 
-func newSeekIndex() *seekIndex {
-	return &seekIndex{*llrb.New(func(a, b interface{}) bool {
-		return a.(seekEntry).t > b.(seekEntry).t
-	})}
-}
-
-func (si *seekIndex) append(se seekEntry) {
-	prev := si.search(se.t)
-	if false && prev.t != se.t {
-		log.Println("New entry", se)
+func newSeekIndex() seekIndex {
+	return seekIndex{
+		Tree: llrb.New(),
 	}
-	if false && prev.t == se.t && prev.offset != se.offset {
-		log.Println("Overriding entry", prev, se)
-	}
-	si.t.ReplaceOrInsert(se)
 }
 
-func (si *seekIndex) search(t time.Duration) (val seekEntry) {
-	si.t.AscendGreaterOrEqual(seekEntry{t, 0}, func(i llrb.Item) bool {
-		val = i.(seekEntry)
+func (idx seekIndex) append(item seekEntry) {
+	prev := idx.search(item.dur)
+	if false && prev.dur != item.dur {
+		log.Println("New entry", item)
+	}
+	if false && prev.dur == item.dur && prev.offset != item.offset {
+		log.Println("Overriding entry", prev, item)
+	}
+	idx.Tree.ReplaceOrInsert(item)
+}
+
+func (idx seekIndex) search(dur time.Duration) (result seekEntry) {
+	idx.Tree.AscendGreaterOrEqual(seekEntry{dur, 0}, func(item llrb.Item) bool {
+		result = item.(seekEntry)
 		return false
 	})
 	return

@@ -5,10 +5,11 @@
 package webm
 
 import (
-	"code.google.com/p/ebml-go/ebml"
 	"errors"
 	"io"
 	"time"
+
+	"github.com/ebml-go/ebml"
 )
 
 type WebM struct {

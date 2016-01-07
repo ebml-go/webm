@@ -1,10 +1,11 @@
 package webm
 
 import (
-	"code.google.com/p/ebml-go/ebml"
 	"io"
 	"log"
 	"time"
+
+	"github.com/ebml-go/ebml"
 )
 
 const (
@@ -220,8 +221,12 @@ func (r *Reader) parseClusters(elmts *ebml.Element) {
 }
 
 func newReader(e *ebml.Element, cuepoints []CuePoint, offset int64) *Reader {
-	r := &Reader{make(chan Packet, 4), make(chan time.Duration, 4),
-		*newSeekIndex(), offset}
+	r := &Reader{
+		Chan:   make(chan Packet, 4),
+		seek:   make(chan time.Duration, 4),
+		index:  newSeekIndex(),
+		offset: offset,
+	}
 	for i, l := 0, len(cuepoints); i < l; i++ {
 		c := cuepoints[i]
 		r.index.append(seekEntry{
