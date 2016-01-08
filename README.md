@@ -1,7 +1,7 @@
 ebml-go // webm
-==============
+===============
 
-Package webm implements parser, reader and seeker for files in WebM container. 
+Package `webm` implements parser, reader and seeker for files in WebM container. 
 
 WebM files consist of video streams compressed with the VP8 or VP9 video codec,
 audio streams compressed with the Vorbis or Opus audio codecs. The WebM file structure is based on the Matroska media container.
