@@ -1,0 +1,8 @@
+hash: 534ab03384c9e5ca0c0b4356f49ea274eca685f767fa7d5891734fda4ccd6790
+updated: 2016-09-24T19:32:57.285544038+03:00
+imports:
+- name: github.com/petar/GoLLRB
+  version: 53be0d36a84c2a886ca057d34b6aa4468df9ccb4
+  subpackages:
+  - llrb
+testImports: []

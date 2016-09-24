@@ -1,4 +1,2 @@
-.*~
-\.orig
-.*\#
 .DS_Store
+vendor/github.com/petar/GoLLRB/doc
