@@ -1,7 +1,0 @@
-ignore:
-  - github.com/ebml-go/ebml
-package: github.com/ebml-go/webm
-import:
-- package: github.com/petar/GoLLRB
-  subpackages:
-  - llrb
