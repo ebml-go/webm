@@ -12,6 +12,20 @@ import (
 	"github.com/ebml-go/ebml"
 )
 
+type TrackType uint8 // ffmpeg define this in 8 bits(uint8 in Go)
+
+const (
+	TrackTypeNone     TrackType = 0x0
+	TrackTypeVideo    TrackType = 0x1
+	TrackTypeAudio    TrackType = 0x2
+	TrackTypeComplex  TrackType = 0x3
+	TrackTypeLogo     TrackType = 0x10
+	TrackTypeSubtitle TrackType = 0x11
+	TrackTypeButtons  TrackType = 0x12
+	TrackTypeControl  TrackType = 0x20
+	TrackTypeMetadata TrackType = 0x21
+)
+
 type WebM struct {
 	Header  `ebml:"1a45dfa3"`
 	Segment `ebml:"18538067"`
@@ -82,11 +96,15 @@ func (t *TrackEntry) GetDefaultDuration() time.Duration {
 }
 
 func (t *TrackEntry) IsVideo() bool {
-	return t.TrackType == 1
+	return TrackType(t.TrackType) == TrackTypeVideo
 }
 
 func (t *TrackEntry) IsAudio() bool {
-	return t.TrackType == 2
+	return TrackType(t.TrackType) == TrackTypeAudio
+}
+
+func (t *TrackEntry) IsSubtitle() bool {
+	return TrackType(t.TrackType) == TrackTypeSubtitle
 }
 
 type Video struct {
@@ -128,9 +146,16 @@ type SegmentInformation struct {
 	WritingApp    string  `ebml:"5741"`
 }
 
+// return duration in seconds
 func (s *SegmentInformation) GetDuration() time.Duration {
 	return time.Second * time.Duration(
 		s.Duration*float64(s.TimecodeScale)/1000000000)
+}
+
+// return duration in milliseconds
+func (s *SegmentInformation) GetDurationMs() time.Duration {
+	return time.Millisecond * time.Duration(
+		s.Duration*float64(s.TimecodeScale)/1000000)
 }
 
 type Cluster struct {
@@ -178,8 +203,8 @@ func Parse(r io.ReadSeeker, m *WebM) (wr *Reader, err error) {
 	if err == nil {
 		err = e.Unmarshal(m)
 		dt := m.Header.DocType
-		if dt != "webm" && dt != "webm\000" {
-			err = errors.New("Not a WebM file")
+		if dt != "webm" && dt != "webm\000" && dt != "matroska" {
+			err = errors.New("Not a WebM or matroska file")
 		}
 		if err != nil && err.Error() == "Reached payload" {
 			segment := err.(ebml.ReachedPayloadError).Element
