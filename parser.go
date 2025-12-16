@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package webm
-
 import (
 	"errors"
 	"io"
@@ -108,18 +106,31 @@ func (t *TrackEntry) IsSubtitle() bool {
 }
 
 type Video struct {
-	FlagInterlaced  uint `ebml:"9A" ebmldef:"0"`
-	StereoMode      uint `ebml:"53B8" ebmldef:"0"`
-	PixelWidth      uint `ebml:"B0"`
-	PixelHeight     uint `ebml:"BA"`
-	PixelCropBottom uint `ebml:"54AA" ebmldef:"0"`
-	PixelCropTop    uint `ebml:"54BB" ebmldef:"0"`
-	PixelCropLeft   uint `ebml:"54CC" ebmldef:"0"`
-	PixelCropRight  uint `ebml:"54DD" ebmldef:"0"`
-	DisplayWidth    uint `ebml:"54B0" ebmldeflink:"PixelWidth"`
-	DisplayHeight   uint `ebml:"54BA" ebmldeflink:"PixelHeight"`
-	DisplayUnit     uint `ebml:"54B2" ebmldef:"0"`
-	AspectRatioType uint `ebml:"54B3" ebmldef:"0"`
+	FlagInterlaced  uint  `ebml:"9A" ebmldef:"0"`
+	StereoMode      uint  `ebml:"53B8" ebmldef:"0"`
+	PixelWidth      uint  `ebml:"B0"`
+	PixelHeight     uint  `ebml:"BA"`
+	PixelCropBottom uint  `ebml:"54AA" ebmldef:"0"`
+	PixelCropTop    uint  `ebml:"54BB" ebmldef:"0"`
+	PixelCropLeft   uint  `ebml:"54CC" ebmldef:"0"`
+	PixelCropRight  uint  `ebml:"54DD" ebmldef:"0"`
+	DisplayWidth    uint  `ebml:"54B0" ebmldeflink:"PixelWidth"`
+	DisplayHeight   uint  `ebml:"54BA" ebmldeflink:"PixelHeight"`
+	DisplayUnit     uint  `ebml:"54B2" ebmldef:"0"`
+	AspectRatioType uint  `ebml:"54B3" ebmldef:"0"`
+    Color           Color `ebml:"55B0"`
+}
+
+type Color struct {
+	MatrixCoefficients      uint `ebml:"55B1" ebmldef:"2"`
+	BitsPerChannel          uint `ebml:"55B2" ebmldef:"0"`
+	ChromaSubsamplingHorz   uint `ebml:"55B3" ebmldef:"1"`
+	ChromaSubsamplingVert   uint `ebml:"55B4" ebmldef:"1"`
+	ChromaSitingHorz        uint `ebml:"55B7" ebmldef:"0"`
+	ChromaSitingVert        uint `ebml:"55B8" ebmldef:"0"`
+	Range                   uint `ebml:"55B9" ebmldef:"0"`
+	TransferCharacteristics uint `ebml:"55BA" ebmldef:"2"`
+	Primaries               uint `ebml:"55BB" ebmldef:"2"`
 }
 
 type Audio struct {
